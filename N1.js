@@ -102,55 +102,6 @@ function loadPreview()
   newTab.document.close();
 }
 
-document.getElementById('save-button').addEventListener('click', function() {
-  const formPreview = document.getElementById("form-preview");
-  const previewContent = formPreview.innerHTML;
-
-  const format = prompt("Save as CSV or JSON? Enter 'csv' or 'json'");
-
-  if (format === 'csv') {
-      saveAsCSV(previewContent);
-  } else if (format === 'json') {
-      saveAsJSON(previewContent);
-  } else {
-      alert("Invalid format. Please enter 'csv' or 'json'.");
-  }
-});
-
-function saveAsCSV(content) 
-{
-  const blob = new Blob([content], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'form.csv';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-}
-
-function saveAsJSON(content)
- {
-  const formObject = parseFormContent(content);
-  const jsonString = JSON.stringify(formObject, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'form.json';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-}
-
-function parseFormContent(content)
- {
-  const formObject = { content: content };
-  return formObject;
-}
-
 function createTable() {
   const formPreview = document.getElementById("preview-form");
   let numRows;
@@ -204,4 +155,52 @@ function createTable() {
   }
 
   formPreview.appendChild(table);
+}
+
+function savePage() {
+  const userChoice = window.prompt("Choose the format to save (JSON or CSV):");
+  if (userChoice) {
+    if (userChoice.toLowerCase() === "json") {
+      saveAsJSON();
+    } else if (userChoice.toLowerCase() === "csv") {
+      saveAsCSV();
+    } else {
+      alert("Invalid choice. Please enter 'JSON' or 'CSV'.");
+    }
+  }
+}
+
+function saveAsJSON() {
+  const data = {
+    key1: "value1",
+    key2: "value2",
+    key3: "value3",
+  };
+  const jsonData = JSON.stringify(data);
+  const blob = new Blob([jsonData], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "data.json";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function saveAsCSV() {
+  const data = [
+    { name: "John", age: 30, city: "New York" },
+    { name: "Jane", age: 25, city: "Los Angeles" },
+    { name: "Bob", age: 35, city: "Chicago" },
+  ];
+  const csvContent =
+    "data:text/csv;charset=utf-8," +
+    data.map((item) => Object.values(item).join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "data.csv";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
